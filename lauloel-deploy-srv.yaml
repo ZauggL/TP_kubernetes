@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lauloel-deployment
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /  # Correction de la clé d'annotation avec un point au lieu d'un espace
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lauloel
+  template:
+    metadata:
+      labels:
+        app: lauloel
+    spec:
+      containers:
+        - name: lauloel-container
+          image: loakzoggo/lauloel
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "256Mi"  # Limite de mémoire
+              cpu: "200m"      # Limite CPU
+            requests:
+              memory: "128Mi"  # Requête de mémoire
+              cpu: "100m"      # Requête CPU
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lauloel-service
+spec:
+  selector:
+    app: lauloel
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30000
